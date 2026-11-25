@@ -1,0 +1,30 @@
+import numpy as np
+import pickle
+import os
+sils =            r'G:\sketchgait\sustech1k\processed\sils'
+sketch_dir =      r'G:\sketchgait\sustech1k\processed\teed'
+pars_dir =         r'G:\sketchgait\sustech1k\processed\parsing'
+dest_dir =       r'G:\sketchgait\sustech1k\processed\sils_teed_pars_merged'
+id_list = sorted(os.listdir(sils))
+for _id in id_list:
+    type_list = sorted(os.listdir(os.path.join(sils, _id)))
+    for _type in type_list:
+        view_list = sorted(os.listdir(os.path.join(sils, _id, _type)))
+        for _view in view_list:
+            seq_info = [_id, _type, _view]
+            with open(os.path.join(pars_dir, *seq_info, _view + '.pkl'), 'rb') as file:
+                pars_ = pickle.load(file)
+                pars_ = np.asarray(pars_)
+                pars_ = pars_[:, np.newaxis, ...]
+            with open(os.path.join(sils, *seq_info, _view + '.pkl'), 'rb') as file:
+                sils_ = pickle.load(file)
+                sils_ = np.asarray(sils_)
+                sils_ = sils_[:, np.newaxis, ...]
+            with open(os.path.join(sketch_dir, *seq_info, _view + '.pkl'), 'rb') as file:
+                sketch_ = pickle.load(file)
+                sketch_ = np.asarray(sketch_)
+                sketch_ = sketch_[:, np.newaxis, ...]
+            result = np.concatenate(( sils_,sketch_,pars_), axis=1)
+            os.makedirs(os.path.join(dest_dir, *seq_info), exist_ok=True)
+            with open(os.path.join(dest_dir, *seq_info, _view + '.pkl'), 'wb') as file:
+                pickle.dump(result, file)
