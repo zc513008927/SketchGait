@@ -1,8 +1,77 @@
 # SketchGait
 
-This repository provides the implementation, configuration files, and supporting resources for **SketchGait** and **SketchGait++ (SketchGaitPP)** on **SUSTech1K**, based on the [OpenGait](https://github.com/ShiqiYu/OpenGait) framework.
+**Sketch It Out: Exploring Label-Free Structural Cues for Multimodal Gait Recognition**
 
-> **Paper status:** Under review. The code, processed data, preprocessing scripts, and checkpoints are shared to facilitate reproducibility.
+Chao Zhang*, Zhuang Zheng*, Ruixin Li, and Zhanyong Mei  
+\*Equal contribution.  
+
+[**Paper (ACM Digital Library)**](https://dl.acm.org/doi/10.1145/3767308.3835541) · [**DOI**](https://doi.org/10.1145/3767308.3835541) · [**arXiv**](https://arxiv.org/abs/2603.05537) · [**Code**](https://github.com/zc513008927/SketchGait) · [**Data & Checkpoints (Baidu Netdisk)**](https://pan.baidu.com/s/1DillSa4rzk8-1yh4j5H2xA?pwd=5478)
+
+**Published in:** Proceedings of the 34th ACM International Conference on Multimedia (ACM Multimedia 2026 / MM '26).
+
+**DOI:** [10.1145/3767308.3835541](https://doi.org/10.1145/3767308.3835541)
+
+## Overview
+
+We introduce **Sketch**, a label-free visual modality extracted from RGB images using edge detectors (including TEED). It preserves dense structural information such as limb articulations and self-occlusion contours, complementing semantic human parsing. **SketchGait** uses Sketch and Parsing with modality-specific streams and a lightweight early fusion branch. **SketchGait++** further incorporates Silhouette.
+
+The released configurations here target the **SUSTech1K** benchmark and are built upon [OpenGait](https://github.com/ShiqiYu/OpenGait). The paper also reports experiments on **CCPG**.
+
+## Paper Figures
+
+The following slots are reserved for figures taken directly from the **published paper**. Export the relevant figures from your own paper, save them in the repository's `assets/` directory with the filenames below, and push the image files together with this README.
+
+### Figure 1: Motivation and Visual Representations
+
+![Figure 1: Sketch and complementary gait representations](assets/paper_fig1.png)
+
+### Figure 2: SketchGait Framework
+
+![Figure 2: Overview of the SketchGait framework](assets/paper_fig2.png)
+
+### Figure 3: Qualitative Visualization
+
+![Figure 3: Qualitative visualization and modality comparisons](assets/paper_fig3.png)
+
+> **Figure setup:** `assets/paper_fig1.png`, `assets/paper_fig2.png`, and `assets/paper_fig3.png` are placeholders for image paths, **not files currently included in the repository**. Export the corresponding figures from the published article, use these filenames (or update the links), and commit the figures to make them visible on GitHub. Please follow the applicable ACM figure-reuse rights and license.
+
+## Main Results
+
+All values below are **Rank-1 recognition accuracy (%)**, transcribed from the previously released paper tables. **OA@R1** denotes overall Rank-1 on SUSTech1K; **Mean** denotes the average over the four CCPG evaluation conditions. These are **paper-reported results**, not a fresh rerun of the released checkpoints.
+
+### SUSTech1K (Paper Table 2)
+
+| Input modalities | Method | NM | BG | CL | CR | UM | UN | OC | NT | OA@R1 | OA@R5 |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Silhouette | DeepGaitV2 | 86.5 | 82.8 | 49.2 | 80.4 | 83.3 | 81.9 | 86.0 | 28.0 | 80.9 | 91.9 |
+| Parsing (M2FP) | DeepGaitV2 | 93.1 | 87.9 | 40.9 | 88.8 | 87.7 | 88.7 | 93.5 | 47.5 | 87.5 | 95.1 |
+| Sketch (TEED) | DeepGaitV2 | 94.5 | 90.1 | 56.4 | 90.5 | 88.1 | 89.3 | 97.3 | 51.5 | 89.6 | 96.3 |
+| Sketch + Parsing | MultiGait++ | 96.6 | 92.9 | 53.7 | 92.7 | 92.9 | 92.0 | 98.4 | 53.1 | 91.9 | 97.1 |
+| **Sketch + Parsing** | **SketchGait** | **97.1** | **94.2** | **60.3** | **93.5** | **93.9** | **93.7** | **98.8** | **55.1** | **92.9** | **97.3** |
+| **Sketch + Silhouette + Parsing** | **SketchGait++** | **97.5** | **94.4** | **60.1** | **93.6** | **94.1** | **93.9** | **98.9** | **54.0** | **93.1** | **97.4** |
+
+### CCPG (Paper Table 3)
+
+| Input modalities | Method | CL | UP | DN | BG | Mean |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Silhouette | DeepGaitV2 | 78.6 | 84.8 | 80.7 | 89.2 | 83.3 |
+| Sketch (TEED) | DeepGaitV2 | 61.0 | 67.4 | 75.7 | 83.1 | 71.2 |
+| Parsing | DeepGaitV2 | 68.8 | 73.6 | 80.1 | 87.8 | 77.6 |
+| Sketch + Parsing (TEED) | MultiGait++ | 69.9 | 77.3 | 80.2 | 91.0 | 79.6 |
+| **Sketch + Parsing (TEED)** | **SketchGait** | **75.3** | **81.1** | **84.5** | **92.8** | **83.4** |
+| **Sketch + Silhouette + Parsing (TEED)** | **SketchGait++** | **82.2** | **87.0** | **86.8** | **94.5** | **87.6** |
+
+### Fusion Ablation on SUSTech1K (Paper Table 4)
+
+| Sketch + Parsing configuration | NM | CL | NT | OA@R-1 |
+| --- | ---: | ---: | ---: | ---: |
+| Dual-branch, no fusion | 97.0 | 60.5 | 53.7 | 92.7 |
+| Concat-only, single branch | 93.5 | 42.4 | 51.3 | 88.7 |
+| Mid-stage (Stage-3), Add | 97.3 | 59.1 | 54.4 | 92.8 |
+| Early-stage (Stage-1), fused-only Add | 96.0 | 51.1 | 52.7 | 91.3 |
+| **Early-stage (Stage-1), tri-branch Add (ours)** | **97.1** | **60.3** | **55.1** | **92.9** |
+
+For the authoritative final version of all experimental results and figures, please refer to the [published ACM paper](https://dl.acm.org/doi/10.1145/3767308.3835541). The tables above reflect the previously released paper version and should be checked against the final ACM version before being treated as a definitive transcription.
 
 ## Repository Contents
 
@@ -102,8 +171,22 @@ The supplied preprocessing follows the approach used in our experiments. **We en
 
 ## Acknowledgement
 
-This repository builds upon [OpenGait](https://github.com/ShiqiYu/OpenGait). We also acknowledge the [SUSTech1K](https://lidargait.github.io) dataset and its contributors.
+This repository is built upon [OpenGait](https://github.com/ShiqiYu/OpenGait). We thank the creators of the [SUSTech1K](https://lidargait.github.io) and [CCPG](https://github.com/BNU-IVC/CCPG) benchmarks, and the authors of the edge-detection and human-parsing methods used to prepare the representations.
 
 ## Citation
 
-The associated manuscript is currently under review. Citation information will be updated after publication.
+If you use SketchGait, SketchGait++, the provided code, checkpoints, or data processing resources, please cite the **published ACM Multimedia 2026 paper**:
+
+```bibtex
+@inproceedings{zhang2026sketchgait,
+  title     = {Sketch It Out: Exploring Label-Free Structural Cues for Multimodal Gait Recognition},
+  author    = {Zhang, Chao and Zheng, Zhuang and Li, Ruixin and Mei, Zhanyong},
+  booktitle = {Proceedings of the 34th ACM International Conference on Multimedia},
+  year      = {2026},
+  publisher = {Association for Computing Machinery},
+  doi       = {10.1145/3767308.3835541},
+  url       = {https://doi.org/10.1145/3767308.3835541}
+}
+```
+
+For the exact publisher-exported citation (including page numbers), use the **Cite** option on the [ACM Digital Library article page](https://dl.acm.org/doi/10.1145/3767308.3835541).
