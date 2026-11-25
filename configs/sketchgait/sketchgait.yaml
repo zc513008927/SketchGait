@@ -10,7 +10,7 @@ data_cfg:
 evaluator_cfg:
   enable_float16: true
   restore_ckpt_strict: true
-  restore_hint: 10000
+  restore_hint: 50000
   save_name: SketchGait
 #  save_name: TriModality_ECAEnhancedAttentionFusion_ConcatProjectionFusion
   eval_func: evaluate_indoor_dataset #evaluate_Gait3D
